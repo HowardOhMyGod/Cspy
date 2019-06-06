@@ -1,0 +1,285 @@
+string:
+    -
+        name: strcmp
+        return: int
+        return_format: "%d"
+        include: string.h
+        inputs:
+            - "[const char*] str1"
+            - "[const char*] str2"
+        input_format:
+            - "%s"
+            - "%s"
+    -
+        name: strcpy
+        return: char*
+        return_format: "%s"
+        include: string.h
+        inputs:
+            - "[const char*] str1"
+            - "[const char*] str2"
+        input_format:
+            - "%s"
+            - "%s"
+    # -
+    #     name: strcpy
+    #     return: char*
+    #     include: string.h
+    #     inputs:
+    #         - "[void]"
+    #     input_format:
+    #         - null
+
+file:
+    -
+        name: readdir
+        return: struct dirent*
+        include: dirent.h
+        return_struct: true
+        inputs:
+            - "[DIR*] dirp"
+        input_format:
+            - null
+    -
+        name: fopen
+        return: FILE*
+        include: stdio.h
+        return_format: "%d"
+        inputs:
+            - "[const char*] pathname"
+            - "[const char*] mode"
+        input_format:
+            - "%s"
+            - "%s"
+    -
+        name: fdopen
+        return: FILE*
+        return_format: "%d"
+        include: stdio.h
+        inputs:
+            - "[int] fd"
+            - "[const char*] mode"
+        input_format:
+            - "%d"
+            - "%s"
+    -
+        name: fwrite
+        return: size_t
+        return_format: "%ld"
+        include: stdio.h
+        inputs:
+            - "[const void*] ptr"
+            - "[size_t] size"
+            - "[size_t] nmemb"
+            - "[FILE*] stream"
+        input_format:
+            - "%s"
+            - "%d"
+            - "%d"
+            - "%d"
+    -
+        name: fread
+        return: size_t
+        return_format: "%ld"
+        include: stdio.h
+        inputs:
+            - "[void*] ptr"
+            - "[size_t] size"
+            - "[size_t] nmemb"
+            - "[FILE*] stream"
+        input_format:
+            - "%s"
+            - "%d"
+            - "%d"
+            - "%d"
+    -
+        name: fclose
+        return: int
+        return_format: "%d"
+        include: stdio.h
+        inputs:
+            - "[FILE*] stream"
+        input_format:
+            - "%d"
+    -
+        name: remove
+        return: int
+        return_format: "%d"
+        include: stdio.h
+        inputs:
+            - "[const char*] pathname"
+        input_format:
+            - "%s"
+    -
+        name: rename
+        return: int
+        return_format: "%d"
+        include: stdio.h
+        inputs:
+            - "[const char*] oldpath"
+            - "[const char*] newpath"
+        input_format:
+            - "%s"
+            - "%s"
+    -
+        name: mkdir
+        return: int
+        return_format: "%d"
+        include:
+            - sys/stat.h
+            - sys/types.h
+        inputs:
+            - "[const char*] pathname"
+            - "[mode_t] mode"
+        input_format:
+            - "%s"
+            - "%o"
+    -
+        name: opendir
+        return: DIR*
+        return_struct: true
+        include:
+            - sys/types.h
+            - dirent.h
+        inputs:
+            - "[const char*] name"
+        input_format:
+            - "%s"
+    -
+        name: link
+        return: int
+        return_format: "%d"
+        include: unistd.h
+        inputs:
+            - "[const char*] oldpath"
+            - "[const char*] newpath"
+        input_format:
+            - "%s"
+            - "%s"
+    -
+        name: unlink
+        return: int
+        return_format: "%d"
+        include: unistd.h
+        inputs:
+            - "[const char*] pathname"
+        input_format:
+            - "%s"
+    -
+        name: rmdir
+        return: int
+        return_format: "%d"
+        include: unistd.h
+        inputs:
+            - "[const char*] pathname"
+        input_format:
+            - "%s"
+    -
+        name: chdir
+        return: int
+        return_format: "%d"
+        include: unistd.h
+        inputs:
+            - "[const char*] path"
+        input_format:
+            - "%s"
+    -
+        name: getcwd
+        return: char*
+        return_format: "%s"
+        include: unistd.h
+        inputs:
+            - "[char *] buf"
+            - "[size_t] size"
+        input_format:
+            - "%s"
+            - "%d"
+    -
+        name: symlink
+        return: int
+        return_format: "%d"
+        include: unistd.h
+        inputs:
+            - "[const char*] target"
+            - "[const char*] linkpath"
+        input_format:
+            - "%s"
+            - "$s"
+    -
+        name: readlink
+        return: ssize_t
+        return_format: "%ld"
+        include: unistd.h
+        inputs:
+            - "[const char*] pathname"
+            - "[char *] buf"
+            - "[size_t] bufsiz"
+        input_format:
+            - "%s"
+            - "%s"
+            - "%d"
+    -
+        name: truncate
+        return: int
+        return_format: "%d"
+        include:
+            - unistd.h
+            - sys/types.h
+        inputs:
+            - "[const char*] path"
+            - "[off_t] length"
+        input_format:
+            - "%s"
+            - "%d"
+
+permission:
+    -
+        name: getpwuid_r
+        return: int
+        return_format: "%d"
+        include: pwd.h
+        inputs:
+            - "[uid_t] uid"
+            - "[struct passwd*] pwd"
+            - "[char *] buffer"
+            - "[size_t] bufsize"
+            - "[struct passwd **] result"
+        input_format:
+            - "%ld"
+            - null
+            - "%s"
+            - "%d"
+            - null
+    -
+        name: getspnam
+        include: shadow.h
+        return: struct spwd*
+        return_struct: true
+        inputs:
+            - "[const char*] name"
+        input_format:
+            - "$s"
+    -
+        name: getspent
+        include: shadow.h
+        return: struct spwd*
+        return_struct: true
+        inputs:
+            - "[void]"
+        input_format:
+            - null
+
+thread:
+    -
+        name: pthread_create
+        return: int
+        return_format: "%d"
+        include: <pthread.h>
+        inputs:
+            - "[pthread_t *] thread"
+            - "[const pthread_attr_t *] attr"
+            - "[void *(*start_routine)(void *)] start_routine"
+            - "[void *] arg"
+        input_format:
+            - "%02x"
+            - null
