@@ -11,3 +11,12 @@ A C function call hooking generator using python.
 | `makefile`     | Compile main.c and hook.c | `hook.so, main`
 | `run.sh`     | Run main with hooking functions | `log_profile`
 | `log_profile`     | Function hooking logs. Format:  [return] func_name p_name=p_value | -
+
+## Example
+
+### log_prpfile
+Hooking `strcpy` and `strcmp`
+```
+[Howard] strcpy str1=Howard,str2=Howard
+[0] strcmp str1=test,str2=test
+```
