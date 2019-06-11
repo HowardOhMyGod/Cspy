@@ -55,20 +55,23 @@ def make_struct(struct_name, struct_var = None):
     format_str = f'"[{",".join(var_map)}] ", {",".join(var_names)}'
     return format_str, var_map, var_names
 
-def get_struct_name(struct):
+def get_struct_name(struct, for_param = True):
+    struct_var = ''
+
     if 'struct' in struct:
         struct_name = re.search('struct (.*)\*', struct).group(1)
     else:
         struct_name = struct.replace('*', '')
 
-    struct_var = re.search('\*\s(.*)', struct).group(1)
+    if for_param:
+        struct_var = re.search('\*\s(.*)', struct).group(1)
     return struct_name, struct_var
 
 def make_return(api):
     return_type = api['return']
 
     if return_type == 'void':
-        return '', ''
+        return '', '', ''
 
     declare_var = f"{return_type} ret;"
     # check if return is struct
@@ -78,7 +81,7 @@ def make_return(api):
     if 'return_struct' in api:
         # return filed in struct
         return_check = '(ret == NULL)'
-        struct_name, _ = get_struct_name(return_type)
+        struct_name, _ = get_struct_name(return_type, False)
         if struct_name in structs:
             return_data, _, _ = make_struct(struct_name)
     else:
@@ -91,7 +94,7 @@ def make_return(api):
 def make_params(api_name, params, params_name, params_format):
     var_map = []
     var_names = []
-
+    
     for idx, p_name in enumerate(params_name):
         # append multi fields from struct
         if params_format[idx] == 'struct':
@@ -128,12 +131,22 @@ def make_func(api):
 
     ret = f'''
     ret = old_func({",".join(params_name)});
-    if {return_check} return ret;'''
+    if {return_check} {{
+        printf("[NULL] ");
+        sprintf(return_data, "[NULL] ");
+        write(my_fd, return_data, strlen(return_data));
+
+        printf({trace});
+        sprintf(log, {trace});
+        write(my_fd, log, strlen(log));
+        close(my_fd);
+        return ret;
+    }}'''
     return_value = 'ret;'
 
     # void return
     if not return_data:
-        return_data = '"[-] "'
+        return_data = '"[void] "'
         ret = ''
         return_value = f'old_func({",".join(params_name)});'
 
@@ -175,7 +188,7 @@ def main():
         api_conf = yaml.safe_load(f)
 
     for api_type, apis in api_conf.items():
-        if api_type != 'others':
+        if api_type == 'test':
             continue
         for api in apis:
             make_header(api)

@@ -1,27 +1,3 @@
-string:
-    -
-        name: strcmp
-        return: int
-        return_format: "%d"
-        include: string.h
-        inputs:
-            - "[const char*] str1"
-            - "[const char*] str2"
-        input_format:
-            - "%s"
-            - "%s"
-    -
-        name: strcpy
-        return: char*
-        return_format: "%s"
-        include: string.h
-        inputs:
-            - "[const char*] str1"
-            - "[const char*] str2"
-        input_format:
-            - "%s"
-            - "%s"
-
 file:
     -
         name: readdir
@@ -473,20 +449,20 @@ others:
             - struct
             - null
 
-thread:
-    -
-        name: pthread_create
-        return: int
-        return_format: "%d"
-        include: pthread.h
-        inputs:
-            - "[pthread_t *] thread"
-            - "[const pthread_attr_t *] attr"
-            - "[void *(*start_routine)(void *)] start_routine"
-            - "[void *] arg"
-        input_format:
-            - "%02x"
-            - null
+# thread:
+#     -
+#         name: pthread_create
+#         return: int
+#         return_format: "%d"
+#         include: pthread.h
+#         inputs:
+#             - "[pthread_t *] thread"
+#             - "[const pthread_attr_t *] attr"
+#             - "[void *(*start_routine)(void *)] start_routine"
+#             - "[void *] arg"
+#         input_format:
+#             - "%02x"
+#             - null
 test:
     # test void params
     -
@@ -507,4 +483,26 @@ test:
         inputs:
             - "[char*] path"
         input_format:
+            - "%s"
+    -
+        name: strcmp
+        return: int
+        return_format: "%d"
+        include: string.h
+        inputs:
+            - "[const char*] str1"
+            - "[const char*] str2"
+        input_format:
+            - "%s"
+            - "%s"
+    -
+        name: strcpy
+        return: char*
+        return_format: "%s"
+        include: string.h
+        inputs:
+            - "[const char*] str1"
+            - "[const char*] str2"
+        input_format:
+            - "%s"
             - "%s"
