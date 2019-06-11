@@ -21,14 +21,6 @@ string:
         input_format:
             - "%s"
             - "%s"
-    # -
-    #     name: strcpy
-    #     return: char*
-    #     include: string.h
-    #     inputs:
-    #         - "[void]"
-    #     input_format:
-    #         - null
 
 file:
     -
@@ -234,22 +226,27 @@ file:
 
 permission:
     -
-        name: getpwuid_r
-        return: int
-        return_format: "%d"
-        include: pwd.h
+        name: getpwnam
+        include:
+            - sys/types.h
+            - pwd.h
+        return: struct passwd *
+        return_struct: true
+        inputs:
+            - "[const char*] name"
+        input_format:
+            - "%s"
+    -
+        name: getpwuid
+        include:
+            - sys/types.h
+            - pwd.h
+        return: struct passwd *
+        return_struct: true
         inputs:
             - "[uid_t] uid"
-            - "[struct passwd*] pwd"
-            - "[char *] buffer"
-            - "[size_t] bufsize"
-            - "[struct passwd **] result"
         input_format:
-            - "%ld"
-            - null
-            - "%s"
             - "%d"
-            - null
     -
         name: getspnam
         include: shadow.h
@@ -268,13 +265,220 @@ permission:
             - "[void]"
         input_format:
             - null
+    -
+        name: chmod
+        include: sys/stat.h
+        return: int
+        return_format: "%d"
+        inputs:
+            - "[const char *] pathname"
+            - "[mode_t] mode"
+        input_format:
+            - "%s"
+            - "%d"
+    -
+        name: fchmod
+        include: sys/stat.h
+        return: int
+        return_format: "%d"
+        inputs:
+            - "[int] fd"
+            - "[mode_t] mode"
+        input_format:
+            - "%d"
+            - "%d"
+    -
+        name: umask
+        include:
+            - sys/types.h
+            - sys/stat.h
+        return: mode_t
+        return_format: "%d"
+        inputs:
+            - "[mode_t] mode"
+        input_format:
+            - "%s"
+    -
+        name: access
+        include: unistd.h
+        return: int
+        return_format: "%d"
+        inputs:
+            - "[const char*] pathname"
+            - "[int] mode"
+        input_format:
+            - "%s"
+            - "%d"
+    -
+        name: chown
+        include: unistd.h
+        return: int
+        return_format: "%d"
+        inputs:
+            - "[const char*] pathname"
+            - "[uid_t] owner"
+            - "[gid_t] group"
+        input_format:
+            - "%s"
+            - "%d"
+            - "%d"
+    -
+        name: getlogin
+        include: unistd.h
+        return: char*
+        return_format: "%s"
+        inputs:
+            - "[void]"
+        input_format:
+            - null
+    -
+        name: getuid
+        include:
+            - unistd.h
+            - sys/types.h
+        return: uid_t
+        return_format: "%d"
+        inputs:
+            - "[void]"
+        input_format:
+            - null
+    -
+        name: setuid
+        include:
+            - unistd.h
+            - sys/types.h
+        return: int
+        return_format: "%d"
+        inputs:
+            - "[uid_t] uid"
+        input_format:
+            - "%d"
+    -
+        name: setgid
+        include:
+            - unistd.h
+            - sys/types.h
+        return: int
+        return_format: "%d"
+        inputs:
+            - "[gid_t] gid"
+        input_format:
+            - "%d"
+
+others:
+    -
+        name: getenv
+        include: stdlib.h
+        return: char*
+        return_format: "%s"
+        inputs:
+            - "[const char*] name"
+        input_format:
+            - "%s"
+    -
+        name: setenv
+        include: stdlib.h
+        return: int
+        return_format: "%d"
+        inputs:
+            - "[const char*] name"
+            - "[const char*] value"
+            - "[int] overwrite"
+        input_format:
+            - "%s"
+            - "%s"
+            - "%d"
+    -
+        name: unsetenv
+        include: stdlib.h
+        return: int
+        return_format: "%s"
+        inputs:
+            - "[const char*] name"
+        input_format:
+            - "%s"
+    -
+        name: putenv
+        include: stdlib.h
+        return: int
+        return_format: "%d"
+        inputs:
+            - "[char*] string"
+        input_format:
+            - "%s"
+    -
+        name: sleep
+        include: stdlib.h
+        return: unsigned int
+        return_format: "%u"
+        inputs:
+            - "[unsigned int] seconds"
+        input_format:
+            - "%u"
+    -
+        name: mmap
+        include: sys/mman.h
+        return: void*
+        return_format: "%p"
+        inputs:
+            - "[void*] addr"
+            - "[size_t] length"
+            - "[int] prot"
+            - "[int] flags"
+            - "[int] fd"
+            - "[off_t] offset"
+        input_format:
+            - "%p"
+            - "%ld"
+            - "%d"
+            - "%d"
+            - "%d"
+            - "%ld"
+    -
+        name: uname
+        include: sys/utsname.h
+        return: int
+        return_format: "%d"
+        inputs:
+            - "[struct utsname*] buf"
+        input_format:
+            - struct
+    -
+        name: time
+        include: time.h
+        return: time_t
+        return_format: "%ld"
+        inputs:
+            - "[time_t*] t"
+        input_format:
+            - "%ld"
+    -
+        name: ctime
+        include: time.h
+        return: char*
+        return_format: "%s"
+        inputs:
+            - "[const time_t*] timep"
+        input_format:
+            - "%p"
+    -
+        name: nanosleep
+        include: time.h
+        return: int
+        return_format: "%d"
+        inputs:
+            - "[const struct timespec*] req"
+            - "[struct timespec*] rem"
+        input_format:
+            - struct
+            - null
 
 thread:
     -
         name: pthread_create
         return: int
         return_format: "%d"
-        include: <pthread.h>
+        include: pthread.h
         inputs:
             - "[pthread_t *] thread"
             - "[const pthread_attr_t *] attr"
@@ -283,3 +487,24 @@ thread:
         input_format:
             - "%02x"
             - null
+test:
+    # test void params
+    -
+        name: strcpy
+        return: char*
+        return_format: "%s"
+        include: string.h
+        inputs:
+            - "[void]"
+        input_format:
+            - null
+    # test void return
+    -
+        name: strcmp
+        return: void
+        return_format: null
+        include: string.h
+        inputs:
+            - "[char*] path"
+        input_format:
+            - "%s"
